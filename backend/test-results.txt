@@ -1,0 +1,47 @@
+1. REGISTER => 201
+{
+  "success": true,
+  "message": "User registered successfully.",
+  "data": {
+    "userId": "699c6f432fee7592b0c7ab34"
+  }
+}
+
+2. LOGIN => 200
+{
+  "success": true,
+  "message": "Login successful.",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWM2ZjQzMmZlZTc1OTJiMGM3YWIzNCIsImlhdCI6MTc3MTg1OTc3OSwiZXhwIjoxNzcxOTQ2MTc5fQ.7xMIEa3KkvNvtLRcpzrMh5UOYNA3gyK9RKr-isPTJqQ"
+}
+
+3. SCORE (before consent) => 200
+{
+  "success": true,
+  "data": {
+    "name": "Test User",
+    "creditScore": 550,
+    "riskLevel": "High Risk"
+  }
+}
+
+4. CONSENT => 200
+{
+  "success": true,
+  "message": "Consent recorded successfully. Your data will now be used for credit scoring."
+}
+
+5. SCORE (after consent) => 200
+{
+  "success": true,
+  "data": {
+    "name": "Test User",
+    "creditScore": 570,
+    "riskLevel": "High Risk"
+  }
+}
+
+6. NO AUTH => 401
+{
+  "success": false,
+  "error": "Access denied. No token provided."
+}

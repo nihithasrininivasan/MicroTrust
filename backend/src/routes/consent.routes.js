@@ -1,17 +1,16 @@
 const { Router } = require("express");
-const { getScore } = require("../controllers/score.controller");
+const { giveConsent } = require("../controllers/consent.controller");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Score Routes
+// Consent Routes
 //
-// GET /api/score — Retrieve the logged-in user's behavioral credit score
-//                  (protected — requires valid JWT)
+// POST /api/consent — Record user's consent for data usage (protected)
 // ──────────────────────────────────────────────────────────────────────────────
 
 const router = Router();
 
-// Protected: user must be logged in to view their score
-router.get("/", authMiddleware, getScore);
+// Protected: user must be logged in to give consent
+router.post("/", authMiddleware, giveConsent);
 
 module.exports = router;
