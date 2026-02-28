@@ -1,92 +1,81 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON, Index, UniqueConstraint
-from sqlalchemy.orm import relationship
-from database import Base
+"""
+MicroTrust — Data Models (Typed Dataclasses)
+============================================
+These mirror the SQLite schema in database.py and are used as
+typed data containers / return types throughout the application.
+No SQLAlchemy dependency — works entirely with the raw sqlite3 engine.
+"""
+from dataclasses import dataclass, field
+from typing import Optional, Dict, Any
 from datetime import datetime
 
-class User(Base):
-    __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    firebase_uid = Column(String, unique=True, index=True, nullable=False)
-    phone_number = Column(String, unique=True, index=True)
-    full_name = Column(String)
-    email = Column(String, index=True)
-    photo_url = Column(String)
-    aadhaar_hash = Column(String, unique=True)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    last_login = Column(DateTime, default=datetime.utcnow)
+@dataclass
+class User:
+    """Represents a row in the `users` table."""
+    id: int
+    firebase_uid: str
+    phone_number: Optional[str] = None
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    photo_url: Optional[str] = None
+    aadhaar_hash: Optional[str] = None
+    is_active: bool = True
+    created_at: Optional[str] = None
+    last_login: Optional[str] = None
 
-    # Relationships
-    signals = relationship("BehaviorSignal", back_populates="user")
-    scores = relationship("Score", back_populates="user")
-    endorsements_given = relationship("TrustEndorsement", foreign_keys="TrustEndorsement.endorser_id", back_populates="endorser")
-    endorsements_received = relationship("TrustEndorsement", foreign_keys="TrustEndorsement.recipient_id", back_populates="recipient")
+    @classmethod
+    def from_row(cls, row: dict) -> "User":
+        return cls(**{k: row[k] for k in row.keys() if k in cls.__dataclass_fields__})
 
-class BehaviorSignal(Base):
-    """
-    Extracted behavioral features for ML scoring.
-    """
-    __tablename__ = "behavior_signals"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    category = Column(String)  # e.g., 'consistency', 'income', 'bills'
-    signal_key = Column(String, index=True)  # e.g., 'txn_frequency_30d'
-    signal_value = Column(Float)
-    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+@dataclass
+class BehaviorSignal:
+    """Represents a row in the `behavior_signals` table."""
+    id: int
+    user_id: int
+    category: Optional[str] = None
+    signal_key: Optional[str] = None
+    signal_value: Optional[float] = None
+    timestamp: Optional[str] = None
 
-    user = relationship("User", back_populates="signals")
+    @classmethod
+    def from_row(cls, row: dict) -> "BehaviorSignal":
+        return cls(**{k: row[k] for k in row.keys() if k in cls.__dataclass_fields__})
 
-    __table_args__ = (
-        Index("ix_signals_user_key_ts", "user_id", "signal_key", "timestamp", postgresql_using="btree"),
-    )
 
-class TrustEndorsement(Base):
-    """
-    Tier 1 (Merchant) and Tier 2 (Peer) endorsements.
-    """
-    __tablename__ = "community_trust"
+@dataclass
+class TrustEndorsement:
+    """Represents a row in the `community_trust` table."""
+    id: int
+    endorser_id: int
+    recipient_id: int
+    endorsement_type: Optional[str] = None
+    weight: float = 1.0
+    created_at: Optional[str] = None
 
-    id = Column(Integer, primary_key=True, index=True)
-    endorser_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    recipient_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    endorsement_type = Column(String)  # 'peer' or 'merchant'
-    weight = Column(Float, default=1.0) # Adjusted by endorser score
-    created_at = Column(DateTime, default=datetime.utcnow)
+    @classmethod
+    def from_row(cls, row: dict) -> "TrustEndorsement":
+        return cls(**{k: row[k] for k in row.keys() if k in cls.__dataclass_fields__})
 
-    endorser = relationship("User", foreign_keys=[endorser_id], back_populates="endorsements_given")
-    recipient = relationship("User", foreign_keys=[recipient_id], back_populates="endorsements_received")
 
-    __table_args__ = (
-        UniqueConstraint("endorser_id", "recipient_id", name="uq_endorser_recipient"),
-    )
+@dataclass
+class Score:
+    """Represents a row in the `scores` table."""
+    id: int
+    user_id: int
+    microtrust_score: Optional[int] = None       # Range: 300–900
+    repayment_probability: Optional[float] = None  # Range: 0.0–1.0 from ML model
+    shap_explanations: Optional[Dict[str, Any]] = field(default=None)  # SHAP waterfall data
+    created_at: Optional[str] = None
 
-class Score(Base):
-    """
-    Calculated MicroTrust scores.
-    """
-    __tablename__ = "scores"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    microtrust_score = Column(Integer)  # 300-900
-    repayment_probability = Column(Float) # 0.0 - 1.0 from LightGBM
-    shap_explanations = Column(JSON) # Waterfall chart data
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    user = relationship("User", back_populates="scores")
-
-    __table_args__ = (
-        Index("ix_scores_user_latest", "user_id", "created_at"),
-    )
-
-class ConsentLog(Base):
-    __tablename__ = "consent_logs"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    aa_name = Column(String)
-    consent_status = Column(String)  # 'active', 'revoked', 'expired'
-    expires_at = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    @classmethod
+    def from_row(cls, row: dict) -> "Score":
+        import json
+        data = {k: row[k] for k in row.keys() if k in cls.__dataclass_fields__}
+        if isinstance(data.get("shap_explanations"), str):
+            try:
+                data["shap_explanations"] = json.loads(data["shap_explanations"])
+            except (json.JSONDecodeError, TypeError):
+                pass
+        return cls(**data)

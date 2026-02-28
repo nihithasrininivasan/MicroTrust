@@ -5,6 +5,19 @@
 *.db
 *.sqlite3
 
+# SQL dump exports (viewer snapshots)
+*_dump.sql
+
+# Installers
+*.msi
+*.exe
+
+# Leftover output/log files
+output.txt
+test_results.txt
+verify_output.txt
+*.log.txt
+
 # Environment
 .env
 .env.local

@@ -9,6 +9,7 @@ from typing import List, Dict, Any, Optional
 from database import ProductionDB
 from datetime import datetime
 import json
+import sqlite3
 
 class SignalManager:
     def __init__(self, db: ProductionDB):
