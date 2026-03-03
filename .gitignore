@@ -221,3 +221,7 @@ ml-service/pipeline/models/*.joblib
 build/
 dist/
 *.egg-info/
+
+MicroTrust/
+backendcode/
+MicroTrustCodeFRONTEND/

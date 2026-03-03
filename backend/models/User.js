@@ -1,63 +1,49 @@
 const mongoose = require("mongoose");
-
-// ──────────────────────────────────────────────────────────────────────────────
-// User Schema — stores registration data, behavioral signals, and consent flag.
-// The `phone` field is the unique login identifier (no email needed for
-// micro-lending populations). Password is stored as a bcrypt hash.
-// ──────────────────────────────────────────────────────────────────────────────
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    // Full name of the user
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters"],
+      select: false, // never return password in queries by default
+    },
     name: {
       type: String,
       required: [true, "Name is required"],
       trim: true,
     },
-
-    // Phone number — serves as unique login identifier
     phone: {
       type: String,
       required: [true, "Phone number is required"],
-      unique: true,
       trim: true,
     },
-
-    // Hashed password (bcrypt)
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-      select: false, // Never returned in queries by default (security)
-    },
-
-    // Self-reported monthly income — used in credit score calculation
-    monthlyIncome: {
-      type: Number,
-      required: [true, "Monthly income is required"],
-    },
-
-    // Number of UPI transactions — behavioral signal for creditworthiness
-    upiTransactions: {
-      type: Number,
-      default: 5,
-    },
-
-    // Community endorsements — social trust indicator
-    endorsements: {
-      type: Number,
-      default: 0,
-    },
-
-    // Whether the user has given consent for data usage in scoring
-    consentGiven: {
-      type: Boolean,
-      default: false,
-    },
+    monthlyIncome: { type: Number, default: 0 },
+    upiTransactions: { type: Number, default: 0 },
+    endorsements: { type: Number, default: 0 },
   },
-  {
-    // Automatically adds createdAt and updatedAt
-    timestamps: true,
-  }
+  { timestamps: true }
 );
+
+// Hash password before saving
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Compare candidate password with hashed password
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);
