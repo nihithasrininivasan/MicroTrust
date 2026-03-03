@@ -1,17 +1,21 @@
 const { Router } = require("express");
-const { getScore } = require("../controllers/score.controller");
-const authMiddleware = require("../middleware/authMiddleware");
+const { register, login } = require("../controllers/auth.controller");
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Score Routes
+// Auth Routes
 //
-// GET /api/score — Retrieve the logged-in user's behavioral credit score
-//                  (protected — requires valid JWT)
+// POST /api/register — Create a new user account
+// POST /api/login    — Authenticate and receive a JWT
+//
+// Both routes are public (no authMiddleware required).
 // ──────────────────────────────────────────────────────────────────────────────
 
 const router = Router();
 
-// Protected: user must be logged in to view their score
-router.get("/", authMiddleware, getScore);
+// Register a new user
+router.post("/register", register);
+
+// Login with phone + password → receive JWT
+router.post("/login", login);
 
 module.exports = router;
