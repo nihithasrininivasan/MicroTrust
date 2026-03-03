@@ -196,3 +196,28 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# ======================
+# PYTHON / ML SERVICE
+# ======================
+
+# Virtual environments
+.venv/
+ml-service/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model artifacts (if large)
+ml-service/pipeline/models/*.joblib
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python build files
+build/
+dist/
+*.egg-info/
