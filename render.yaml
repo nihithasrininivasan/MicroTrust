@@ -2,14 +2,12 @@ services:
   # ── Backend API (Node.js / Express) ──────────────────────────────────────
   - type: web
     name: microtrust-backend
-    runtime: node
+    env: node
     rootDir: backend
     buildCommand: npm install
     startCommand: node server.js
     healthCheckPath: /health
     envVars:
-      - key: PORT
-        value: 5000
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
@@ -18,15 +16,14 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+      - key: NODE_VERSION
+        value: 20.11.0
 
   # ── ML Service (Python / FastAPI) ────────────────────────────────────────
   - type: web
     name: microtrust-ml
-    runtime: python
+    env: python
     rootDir: ml-service
     buildCommand: pip install -r requirements.txt && python -m pipeline.train_model
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
-    envVars:
-      - key: PORT
-        value: 8000
