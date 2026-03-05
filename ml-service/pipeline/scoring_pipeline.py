@@ -25,9 +25,19 @@ _SCALER_PATH = os.path.join(_MODEL_DIR, "scaler.pkl")
 # ---------------------------------------------------------------------------
 # 2. Load all models once at import time for fast inference
 # ---------------------------------------------------------------------------
-_logreg_model = joblib.load(_LOGREG_PATH)
-_rf_model = joblib.load(_RF_PATH)
-_scaler = joblib.load(_SCALER_PATH)
+try:
+    _logreg_model = joblib.load(_LOGREG_PATH)
+    _rf_model = joblib.load(_RF_PATH)
+    _scaler = joblib.load(_SCALER_PATH)
+except Exception as e:
+    print(f"⚠️  Failed to load pre-trained models: {e}")
+    print("   Retraining models with current package versions...")
+    from pipeline.train_model import train_and_save
+    train_and_save()
+    _logreg_model = joblib.load(_LOGREG_PATH)
+    _rf_model = joblib.load(_RF_PATH)
+    _scaler = joblib.load(_SCALER_PATH)
+    print("✅ Models retrained and loaded successfully")
 
 # Ensemble blend weights
 LOGREG_WEIGHT = 0.4

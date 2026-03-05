@@ -24,7 +24,7 @@ services:
     name: microtrust-ml
     runtime: python
     rootDir: ml-service
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python -m pipeline.train_model
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
