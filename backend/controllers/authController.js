@@ -1,4 +1,7 @@
 const User = require("../models/User");
+const Score = require("../models/Score");
+const Consent = require("../models/Consent");
+const Endorsement = require("../models/Endorsement");
 const { signToken } = require("../utils/jwt");
 
 /**
@@ -37,6 +40,14 @@ async function register(req, res, next) {
             message: "Registration successful",
             userId: user._id,
             token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                monthlyIncome: user.monthlyIncome,
+                upiTransactions: user.upiTransactions,
+            },
         });
     } catch (err) {
         next(err);
@@ -45,7 +56,7 @@ async function register(req, res, next) {
 
 /**
  * POST /api/auth/login
- * Authenticate a user and return a JWT.
+ * Authenticate a user and return a JWT + user profile.
  */
 async function login(req, res, next) {
     try {
@@ -77,10 +88,85 @@ async function login(req, res, next) {
             message: "Login successful",
             userId: user._id,
             token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                monthlyIncome: user.monthlyIncome,
+                upiTransactions: user.upiTransactions,
+            },
         });
     } catch (err) {
         next(err);
     }
 }
 
-module.exports = { register, login };
+/**
+ * GET /api/auth/profile
+ * Return the authenticated user's profile.
+ */
+async function getProfile(req, res, next) {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ status: 404, message: "User not found" });
+        }
+
+        // Get latest score
+        const latestScore = await Score.findOne({ userId: user._id }).sort({ calculatedAt: -1 });
+
+        // Get consent status
+        const consent = await Consent.findOne({ userId: user._id, consentGiven: true });
+
+        // Get endorsement count
+        const endorsementCount = await Endorsement.countDocuments({ userId: user._id });
+
+        res.status(200).json({
+            status: 200,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                monthlyIncome: user.monthlyIncome,
+                upiTransactions: user.upiTransactions,
+                endorsementCount,
+                hasConsent: !!consent,
+                latestScore: latestScore ? latestScore.creditScore : null,
+                scoreRange: latestScore ? latestScore.scoreRange : null,
+                riskLevel: latestScore ? latestScore.riskLevel : null,
+                createdAt: user.createdAt,
+            },
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+/**
+ * DELETE /api/auth/account
+ * Delete the authenticated user and all associated data.
+ */
+async function deleteAccount(req, res, next) {
+    try {
+        const userId = req.user.id;
+
+        // Delete all associated data
+        await Promise.all([
+            User.deleteOne({ _id: userId }),
+            Score.deleteMany({ userId }),
+            Consent.deleteMany({ userId }),
+            Endorsement.deleteMany({ userId }),
+        ]);
+
+        res.status(200).json({
+            status: 200,
+            message: "Account and all associated data deleted successfully",
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { register, login, getProfile, deleteAccount };

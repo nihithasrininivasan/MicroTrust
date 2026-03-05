@@ -10,12 +10,19 @@ const authRoutes = require("./routes/auth");
 const consentRoutes = require("./routes/consent");
 const scoreRoutes = require("./routes/scores");
 const lenderRoutes = require("./routes/lenders");
+const endorsementRoutes = require("./routes/endorsements");
+const rewardRoutes = require("./routes/rewards");
 
 const app = express();
 
 // ── Global Middleware ────────────────────────────────────────────────────
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(generalLimiter);
@@ -26,10 +33,12 @@ app.get("/health", (_req, res) => {
 });
 
 // ── API Routes ───────────────────────────────────────────────────────────
-app.use("/api/auth", authRoutes);       // POST /api/auth/register, POST /api/auth/login
-app.use("/api/consent", consentRoutes); // POST /api/consent
-app.use("/api/score", scoreRoutes);     // GET  /api/score/:userId
-app.use("/api/lenders", lenderRoutes);  // POST /api/lenders/endorsement
+app.use("/api/auth", authRoutes);             // POST /register, POST /login, GET /profile, DELETE /account
+app.use("/api/consent", consentRoutes);       // POST /, GET /status
+app.use("/api/score", scoreRoutes);           // GET /:userId, GET /:userId/history
+app.use("/api/lenders", lenderRoutes);        // POST /endorsement
+app.use("/api/endorsements", endorsementRoutes); // GET /, POST /, DELETE /:id
+app.use("/api/rewards", rewardRoutes);        // GET /
 
 // ── 404 Handler ──────────────────────────────────────────────────────────
 app.use((_req, res) => {
