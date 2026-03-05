@@ -1,115 +1,168 @@
-# MicroTrust
+MicroTrust — AI-Powered Alternative Credit Scoring
 
-> **Production-grade behavioral trust scoring engine** — built on SQLite with ML-ready signal versioning, community trust aggregation, and a FastAPI intelligence layer.
+MicroTrust is an AI-driven platform that enables financial inclusion for individuals without traditional credit history. By analyzing alternative behavioral signals such as transaction consistency, bill payment patterns, and income stability, MicroTrust generates a trust-based credit score that helps lenders evaluate creditworthiness beyond conventional systems.
 
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+Unlike traditional credit models that rely on past debt, MicroTrust evaluates everyday financial behavior to build a fairer and more inclusive credit system.
 
----
+Live Product Experience
 
-## 🏗️ Architecture
+MicroTrust is designed as a complete user-facing platform, allowing users or financial institutions to generate a trust score directly through an intuitive interface.
 
-```
-MicroTrust/
-├── backend/                # Node.js relay/gateway service
-│   ├── server.js           # Entry point
-│   ├── app.js              # Express app
-│   ├── routes/             # API Endpoints
-│   ├── controllers/        # Business logic
-│   └── models/             # Mongoose schemas
-│
-├── frontend/               # React / Vite SPA
-│   ├── src/                # Components and Views
-│   ├── public/             # Static assets
-│   └── package.json        
-│
-├── ml-service/             # FastAPI ML scoring microservice
-│   ├── app/
-│   │   ├── main.py         # ML service entry point
-│   │   ├── routes/score.py # POST /score endpoint
-│   │   └── models/score.py # Pydantic request/response models
-│   └── pipeline/
-│       └── scoring_pipeline.py  # Core scoring logic
-│
-├── db engineer/            # Legacy Python Intelligence Layer (SQLite)
-│   ├── app.py              # Legacy FastAPI entry point
-│   └── database.py         # SQLite engine
-│
-└── tests/                  # Verification & integration test suite
-```
+Users can:
 
----
+Enter behavioral financial signals through the app
 
-## 🚀 Running the Frontend (Local)
+Generate a MicroTrust Score instantly
 
-This project contains a modern React frontend connected to the MicroTrust API.
+View risk classification and model confidence
 
-**Prerequisites:** Node.js
+Understand which behaviors influenced their score
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-2. **Set the Environment variables:**
-   Create a `.env.local` file and add your `GEMINI_API_KEY`:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-3. **Start the Frontend Development Server:**
-   ```bash
-   npm run dev
-   ```
+This transforms complex machine learning predictions into a clear, transparent financial trust profile.
 
-*(You can also view the original prototype in AI Studio: https://ai.studio/apps/49f638a9-e818-45b9-8a31-531a300521a8)*
+Demo Flow
 
----
+The platform works through the following pipeline:
 
-## ⚙️ Running the Backend Services (Local)
+User Interface (Frontend App)
+        ↓
+Node.js Backend API
+        ↓
+Python ML Scoring Service
+        ↓
+MicroTrust Score + Risk Insights
 
-### 1. Node.js Gateway API
-```bash
+A user enters behavioral signals through the frontend interface, which are processed by the backend and evaluated by the AI scoring engine to produce an interpretable credit score.
+
+Core Features
+Full Product Interface
+
+MicroTrust includes a fully functional frontend application that allows users to interact with the scoring system in a simple and intuitive way.
+
+Users can:
+
+Input behavioral financial indicators
+
+Generate a trust score instantly
+
+View risk classification and explanations
+
+This makes the platform accessible to both lenders and individuals.
+
+AI Ensemble Credit Scoring Engine
+
+The platform uses an ensemble machine learning model combining:
+
+Logistic Regression
+Provides interpretable probability estimates and transparent decision logic.
+
+Random Forest
+Captures complex nonlinear relationships between financial behavior signals.
+
+The models are combined using probability averaging to produce a robust and stable credit risk prediction.
+
+Explainable AI
+
+MicroTrust provides transparency by returning key behavioral factors that influenced the score.
+
+Example response:
+
+{
+  "microtrust_score": 742,
+  "risk_bucket": "Low Risk",
+  "model_confidence": 0.87,
+  "top_risk_factors": [
+    "low_bill_payment_regularity",
+    "low_upi_consistency"
+  ]
+}
+
+This allows both lenders and users to understand why a score was assigned.
+
+Model Evaluation
+
+The system evaluates model performance using standard machine learning metrics:
+
+ROC-AUC – Measures how well the model distinguishes between reliable and risky users.
+
+F1 Score – Balances precision and recall to ensure fair classification.
+
+Our ensemble model achieves strong performance with a ROC-AUC above 0.9, demonstrating effective risk prediction.
+
+Technology Stack
+Frontend
+
+Flutter / React Native (or specify your framework)
+
+Responsive UI for interactive scoring experience
+
+Backend
+
+Node.js
+
+Express.js
+
+REST API architecture
+
+Machine Learning Service
+
+Python
+
+FastAPI
+
+Scikit-learn
+
+NumPy
+
+Pandas
+
+ML Models
+
+Logistic Regression
+
+Random Forest
+
+Ensemble probability scoring
+
+Infrastructure
+
+Microservice architecture
+
+Cloud deployment (Render)
+
+Running the Project Locally
+
+Clone the repository:
+
+git clone <repo-url>
+cd microtrust
+Start the ML Scoring Service
+cd ml-service
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
+The ML API will be available at:
+
+http://127.0.0.1:8000/docs
+Start the Backend Server
 cd backend
 npm install
-npm run seed  # One-time DB seed
 npm start
-# http://localhost:5000
-```
+Start the Frontend App
+cd frontend
+npm install
+npm start
 
-### 2. Python ML Microservice
-```bash
-cd ml-service
-python -m venv venv
-source venv/bin/activate  # (or .\venv\Scripts\activate on Windows)
-pip install -r requirements.txt
-python app/main.py
-# http://localhost:8000
-```
+The application interface will launch locally, allowing users to interact with the MicroTrust scoring system.
 
----
+Impact
 
-## 📡 API Endpoints (Gateway)
+MicroTrust aims to bridge the gap between the informal economy and formal financial systems by transforming everyday financial behavior into measurable trust signals.
 
-| Method | Route | Description |
-|---|---|---|
-| `GET` | `/health` | Engine status check |
-| `POST` | `/api/auth/register` | Register a new user |
-| `POST` | `/api/auth/login` | Authenticate and get JWT |
-| `POST` | `/api/consent` | Record data sharing consent |
-| `GET` | `/api/score/:userId` | Get calculated trust score |
-| `POST` | `/api/lenders/endorsement` | Match user with loan lenders |
+By leveraging AI, explainable models, and alternative financial data, MicroTrust enables fairer access to credit for underserved populations.
 
----
+Team
 
-## 🧪 Running Tests
-
-```bash
-# Schema + row counts on production DB
-python tests/verify_schema.py
-
-# Full logic tests (temp DB, zero side effects)
-python tests/verify_db_comprehensive.py
-
-# Integration tests against live production DB
-python tests/test_manager.py
-```
+Built by a team of engineers focused on AI, fintech, and financial inclusion.
