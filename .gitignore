@@ -15,6 +15,7 @@
 # Leftover output/log files
 output.txt
 test_results.txt
+test-results.txt
 verify_output.txt
 *.log.txt
 

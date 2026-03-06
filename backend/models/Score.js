@@ -11,7 +11,7 @@ const scoreSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0,
-            max: 900,
+            max: 1000,
         },
         scoreRange: {
             type: String,

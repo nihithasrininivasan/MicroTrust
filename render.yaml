@@ -27,3 +27,14 @@ services:
     buildCommand: pip install --no-cache-dir --prefer-binary -r requirements.txt && python -m pipeline.train_model
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
+
+  # ── Frontend (React / Vite Static Site) ──────────────────────────────────
+  - type: web
+    name: microtrust-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
