@@ -1,72 +1,75 @@
 MicroTrust — AI-Powered Alternative Credit Scoring
 
-MicroTrust is an AI-driven platform that enables financial inclusion for individuals without traditional credit history. By analyzing alternative behavioral signals such as transaction consistency, bill payment patterns, and income stability, MicroTrust generates a trust-based credit score that helps lenders evaluate creditworthiness beyond conventional systems.
+Building financial trust beyond traditional credit history.
 
-Unlike traditional credit models that rely on past debt, MicroTrust evaluates everyday financial behavior to build a fairer and more inclusive credit system.
+MicroTrust is an AI-powered fintech platform that expands access to credit by evaluating alternative behavioral financial signals instead of relying solely on traditional credit scores.
 
-Live Product Experience
+By analyzing indicators such as transaction consistency, bill payment behavior, income stability, and digital payment patterns, MicroTrust generates an interpretable trust score that enables lenders to make more inclusive and data-driven lending decisions.
 
-MicroTrust is designed as a complete user-facing platform, allowing users or financial institutions to generate a trust score directly through an intuitive interface.
+Unlike conventional credit models that depend on historical debt, MicroTrust focuses on everyday financial behavior, helping individuals with limited or no credit history build measurable financial trust.
 
-Users can:
+Key Features
+🤖 AI-Powered Credit Scoring
+Ensemble Machine Learning model using Logistic Regression and Random Forest
+Alternative behavioral financial signal analysis
+Real-time trust score generation
+Confidence scoring and risk classification
+📊 Explainable AI
+Transparent credit score explanations
+Risk factor analysis
+Model confidence reporting
+Human-readable lending insights
+💻 Full-Stack Application
+Interactive frontend for score generation
+RESTful backend services
+Dedicated FastAPI machine learning microservice
+Modular microservice architecture
+🏗️ System Architecture
+Frontend (React)
+        │
+        ▼
+ Node.js + Express API
+        │
+        ▼
+ FastAPI ML Service
+        │
+        ▼
+ Ensemble ML Models
+(Logistic Regression + Random Forest)
+        │
+        ▼
+ MicroTrust Score + Risk Insights
+⚙️ How It Works
+Users enter behavioral financial information through the application.
+The backend validates and forwards the request to the ML service.
+Ensemble models evaluate multiple behavioral indicators.
+Predictions are combined to generate:
+MicroTrust Score
+Risk Classification
+Model Confidence
+Key Risk Factors
+Results are returned through an intuitive dashboard with explainable AI insights.
+🧠 Machine Learning Pipeline
 
-Enter behavioral financial signals through the app
-
-Generate a MicroTrust Score instantly
-
-View risk classification and model confidence
-
-Understand which behaviors influenced their score
-
-This transforms complex machine learning predictions into a clear, transparent financial trust profile.
-
-Demo Flow
-
-The platform works through the following pipeline:
-
-User Interface (Frontend App)
-        ↓
-Node.js Backend API
-        ↓
-Python ML Scoring Service
-        ↓
-MicroTrust Score + Risk Insights
-
-A user enters behavioral signals through the frontend interface, which are processed by the backend and evaluated by the AI scoring engine to produce an interpretable credit score.
-
-Core Features
-Full Product Interface
-
-MicroTrust includes a fully functional frontend application that allows users to interact with the scoring system in a simple and intuitive way.
-
-Users can:
-
-Input behavioral financial indicators
-
-Generate a trust score instantly
-
-View risk classification and explanations
-
-This makes the platform accessible to both lenders and individuals.
-
-AI Ensemble Credit Scoring Engine
-
-The platform uses an ensemble machine learning model combining:
+MicroTrust combines multiple supervised learning models to improve prediction robustness.
 
 Logistic Regression
-Provides interpretable probability estimates and transparent decision logic.
-
+Interpretable probability estimation
+Transparent decision boundaries
 Random Forest
-Captures complex nonlinear relationships between financial behavior signals.
+Captures nonlinear behavioral patterns
+Improves predictive performance
+Ensemble Scoring
 
-The models are combined using probability averaging to produce a robust and stable credit risk prediction.
+Predictions are combined through probability averaging to generate a stable and reliable trust score.
 
-Explainable AI
+Model evaluation includes:
 
-MicroTrust provides transparency by returning key behavioral factors that influenced the score.
-
-Example response:
-
+ROC-AUC
+Precision
+Recall
+F1 Score
+📊 Example Prediction
 {
   "microtrust_score": 742,
   "risk_bucket": "Low Risk",
@@ -76,93 +79,76 @@ Example response:
     "low_upi_consistency"
   ]
 }
-
-This allows both lenders and users to understand why a score was assigned.
-
-Model Evaluation
-
-The system evaluates model performance using standard machine learning metrics:
-
-ROC-AUC – Measures how well the model distinguishes between reliable and risky users.
-
-F1 Score – Balances precision and recall to ensure fair classification.
-
-Our ensemble model achieves strong performance with a ROC-AUC above 0.9, demonstrating effective risk prediction.
-
-Technology Stack
+🛠 Tech Stack
 Frontend
-
-Flutter / React Native (or specify your framework)
-
-Responsive UI for interactive scoring experience
-
+React
+TypeScript
 Backend
-
 Node.js
-
 Express.js
-
-REST API architecture
-
-Machine Learning Service
-
+Machine Learning
 Python
-
 FastAPI
-
 Scikit-learn
-
 NumPy
-
 Pandas
-
-ML Models
-
+Models
 Logistic Regression
-
 Random Forest
-
-Ensemble probability scoring
-
+Ensemble Probability Scoring
 Infrastructure
-
-Microservice architecture
-
-Cloud deployment (Render)
-
-Running the Project Locally
-
-Clone the repository:
-
-git clone <repo-url>
+Docker
+Render
+REST APIs
+Microservice Architecture
+📂 Project Structure
+frontend/
+backend/
+ml-service/
+models/
+docs/
+🚀 Running Locally
+Clone the repository
+git clone <repository-url>
 cd microtrust
-Start the ML Scoring Service
+Start the Machine Learning Service
 cd ml-service
+
 python -m venv .venv
+
 source .venv/bin/activate
+
 pip install -r requirements.txt
+
 uvicorn app.main:app --reload
 
-The ML API will be available at:
+ML API:
 
 http://127.0.0.1:8000/docs
-Start the Backend Server
+Start Backend
 cd backend
+
 npm install
+
 npm start
-Start the Frontend App
+Start Frontend
 cd frontend
+
 npm install
+
 npm start
+🌍 Impact
 
-The application interface will launch locally, allowing users to interact with the MicroTrust scoring system.
+Millions of individuals remain excluded from traditional financial systems due to limited credit history.
 
-Impact
+MicroTrust demonstrates how AI, explainable machine learning, and alternative financial data can help create a fairer and more inclusive credit evaluation process while maintaining transparency and interpretability.
 
-MicroTrust aims to bridge the gap between the informal economy and formal financial systems by transforming everyday financial behavior into measurable trust signals.
+📌 Future Improvements
+Federated learning for privacy-preserving scoring
+Graph-based financial behavior analysis
+Explainable AI dashboards
+Time-series behavioral modeling
+Continuous model retraining pipeline
+👥 Team
 
-By leveraging AI, explainable models, and alternative financial data, MicroTrust enables fairer access to credit for underserved populations.
-
-Team
-
-Built by a team of engineers focused on AI, fintech, and financial inclusion.
+Developed during a fintech hackathon by a multidisciplinary team focused on AI, machine learning, financial inclusion, and scalable software engineering.
